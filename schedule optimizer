@@ -1,0 +1,31 @@
+def max_non_overlapping_meetings(meetings):
+    meetings.sort(key=lambda x: x[1])
+    count = 0
+    last_end_time = -float('inf')
+    
+    for start, end in meetings:
+        if start >= last_end_time:
+            count += 1
+            last_end_time = end
+    
+    return count
+
+def take_user_input():
+    meetings = []
+    print("Enter meeting times as pairs (start time, end time). Type 'done' to finish.")
+    
+    while True:
+        user_input = input("Enter meeting (start end) or 'done' to finish: ").strip()
+        if user_input.lower() == 'done':
+            break
+        try:
+            start, end = map(int, user_input.split())
+            meetings.append((start, end))
+        except ValueError:
+            print("Invalid input. Please enter two integers for start and end times.")
+    
+    return meetings
+
+meetings = take_user_input()
+result = max_non_overlapping_meetings(meetings)
+print(f"Maximum number of non-overlapping meetings: {result}")
