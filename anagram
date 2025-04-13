@@ -1,0 +1,26 @@
+def group_anagrams(words):
+    anagram = []
+    for word in words:
+        anagram_found = False
+        for group in anagram:
+            if len(group[0]) == len(word):
+                temp_group_word = group[0]
+                temp_word = word
+                temp_list1 = list(temp_group_word)
+                temp_list2 = list(temp_word)
+                for char in temp_word:
+                    if char in temp_list1:
+                        temp_list1.remove(char)
+                    else:
+                        break
+                else:
+                    group.append(word)
+                    anagram_found = True
+                    break
+        if not anagram_found:
+            anagram.append([word])
+    return anagram
+Input = input("Enter a list of words: ")
+words = Input.split()
+result = group_anagrams(words)
+print("Grouped Anagrams:", result)
