@@ -1,0 +1,73 @@
+def detect_circular_dependencies(dependencies):
+    graph = {}
+    for src, dest in dependencies:
+        if src not in graph:
+            graph[src] = []
+        graph[src].append(dest)
+
+    def dfs(node, visited, rec_stack, path):
+        if rec_stack[node]:
+            cycle_start_index = -1
+            for i in range(len(path)-1, -1, -1):
+                if path[i] == node:
+                    cycle_start_index = i
+                    break
+            return path[cycle_start_index:]
+
+        if visited[node]:
+            return []
+
+        visited[node] = True
+        rec_stack[node] = True
+        path.append(node)
+
+        for i in range(len(graph[node])):
+            neighbor = graph[node][i]
+            cycle = dfs(neighbor, visited, rec_stack, path)
+            if cycle:
+                return cycle
+
+        rec_stack[node] = False
+        path.pop()
+        return []
+
+    visited = {}
+    rec_stack = {}
+    for node in graph:
+        visited[node] = False
+        rec_stack[node] = False
+    cycle_nodes = []
+
+    for node in graph:
+        if not visited[node]:
+            cycle_nodes = dfs(node, visited, rec_stack, [])
+            if cycle_nodes:
+                break
+
+    return cycle_nodes
+
+def take_user_input():
+    dependencies = []
+    print("Enter package dependencies as pairs (e.g., 'A B' for A depends on B).")
+    print("Type 'done' to finish input.")
+
+    while True:
+        user_input = input("Enter dependency (or 'done' to finish): ").strip()
+        if user_input.lower() == 'done':
+            break
+        try:
+            src, dest = user_input.split()
+            dependencies.append((src, dest))
+        except ValueError:
+            print("Invalid input. Please enter a source and a destination, separated by a space.")
+    
+    return dependencies
+
+dependencies = take_user_input()
+
+cycle = detect_circular_dependencies(dependencies)
+
+if cycle:
+    print(f"Cycle detected: {cycle}")
+else:
+    print("No circular dependencies found.")
